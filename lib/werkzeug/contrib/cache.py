@@ -110,6 +110,7 @@ class BaseCache(object):
         return None
 
     def delete(self, key):
+        # type: (object) -> object
         """Delete `key` from the cache.
 
         :param key: the key to delete.

@@ -1,7 +1,7 @@
 from main import app
 from flask import render_template,flash,redirect,url_for
 from models import Item
-from forms import ItemForm
+from forms import ItemForm, DelForm
 import uuid
 
 @app.route('/',methods=['GET','POST'])
@@ -32,3 +32,15 @@ def index():
                            itemsOfInterest=itemsOfInterest,
                            form=form
                            )
+@app.route('/',methods=['DELETE'])
+def index():
+      form=DelForm()
+      if form.validate_on_submit():
+          itemsOfInterest = Item.item
+          itemsOfInterest.delete()
+          flash('Item deleted!')
+          return redirect(url_for('index'))
+      return render_template('index.html',
+                             form=form,
+                             title='USI Help System'
+                             )
