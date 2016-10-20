@@ -2,15 +2,17 @@ from main import app
 from flask import render_template,flash,redirect,url_for
 from models import Item
 from forms import ItemForm, DelForm
+from google.appengine.ext import ndb
 import uuid
 
 @app.route('/',methods=['GET','POST'])
 def index():
     form=ItemForm()
+    delForm = DelForm()
     itemsOfInterest = Item.query()
     if len(itemsOfInterest.fetch(None))==0:
-        mower=Item(id=str(uuid.uuid1()), item='Lawn Mowers')
-        eater=Item(id=str(uuid.uuid1()),item='Weed Eaters')
+        mower=Item(id=str(uuid.uuid1()), item='Lawn Mower')
+        eater=Item(id=str(uuid.uuid1()),item='Weed Eater')
         mower.addModel('Honda')
         mower.addModel('Black & Decker')
         eater.addModel('Torro')
@@ -27,20 +29,18 @@ def index():
         newItem.put()
         flash('New item added!')
         return redirect(url_for('index'))
+    if delForm.validate_on_submit():
+        myItems = Item.query()
+        for item in myItems:
+            print item
+            print item.id
+            if str(item.id) == str(delForm.id.data):
+                ndb.delete_multi([item.key])
+        flash('Item deleted!')
+        return redirect(url_for('index'))
     return render_template('index.html',
                            title='USI Help System',
                            itemsOfInterest=itemsOfInterest,
-                           form=form
+                           form=form,
+                           delForm=delForm
                            )
-@app.route('/',methods=['DELETE'])
-def index():
-      form=DelForm()
-      if form.validate_on_submit():
-          itemsOfInterest = Item.item
-          itemsOfInterest.delete()
-          flash('Item deleted!')
-          return redirect(url_for('index'))
-      return render_template('index.html',
-                             form=form,
-                             title='USI Help System'
-                             )
