@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+
 <html>
   <head>
     <title>Submit a form</title>
@@ -15,7 +18,7 @@
           <label for="email">Email address:</label>
           <input type="email" name="email"><br />
           <label for="site_url">Website URL:</label>
-          <input type="url" name="site_url"><br />
+          <input type="text" name="site_url"><br />
           <label for="comments">Comments:</label>
           <textarea name="comments"></textarea><br />
           <input type="submit">
@@ -24,3 +27,5 @@
     </div>
   </body>
 </html>
+
+{% endblock %}

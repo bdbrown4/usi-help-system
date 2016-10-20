@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Hello, World!</h1>
+<h1>Hello, World!!!</h1>
 <form action="" method="post" name="post">
     {{ form.hidden_tag() }}
     <p>{{form.item(size=30,maxlength=140)}}</p>
@@ -16,7 +16,11 @@
 <ul>
     {% for item in itemsOfInterest %}
     <li>
-            {{item.item}} <p><input type="submit" value="Delete Item"></p>
+        <form action="" method="post" name="post">
+            {{ form.hidden_tag() }}
+                 {{item.item}}
+            <input type="submit" value="Delete Item">
+            <input type="hidden" name="id" value="{{ item.id }}"></form>
     </li>
     {% endfor %}
 </ul>
