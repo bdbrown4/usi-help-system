@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Hello, World!!! This is my source control TEST</h1>
+<h1>Hello, World!!!</h1>
 <link rel="stylesheet" type="text/css" href="/style.css">
 <script type="text/javascript" src="/Index.js"></script>
 <form action="" method="post" name="post">
@@ -23,7 +23,7 @@
             <p id="label">{{item.item}}</p>
             {{ delForm.hidden_tag() }}
             <input type="hidden" name="id" value="{{ item.id }}">
-            <input type="submit" value="Delete Item" name="delete">
+            <input type="submit" value="Delete Item" id="deleteButton" name="delete">
         </form>
         <form action="" method="post" name="post">
             {{ editForm.hidden_tag() }}
@@ -37,7 +37,7 @@
             {%endfor%}
             {%endif%}
             </p>
-            <input type="submit" class="realEdit" onclick="RealEdit()" id="edit" name="edit" value="Edit Item">
+            <input type="submit" class="realEdit" id="edit"  name="edit" value="Edit Item">
             <!--<input type="button" onclick="PhonyEdit()" id="phonyEdit" value="Edit Item">-->
         </form>
     </li>
