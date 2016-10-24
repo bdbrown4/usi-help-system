@@ -6,4 +6,15 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="GAE_SDK" level="project" />
   </component>
+  <component name="TemplatesService">
+    <option name="templateFileTypes">
+      <list>
+        <option value="HTML" />
+        <option value="XML" />
+        <option value="XHTML" />
+        <option value="CSS" />
+        <option value="JavaScript" />
+      </list>
+    </option>
+  </component>
 </module>

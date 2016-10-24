@@ -11,3 +11,8 @@ class ItemForm(Form):
 
 class DelForm(Form):
     id=StringField('id',validators=[DataRequired()])
+
+# EditForm used for editing
+class EditForm(Form):
+    id = StringField('id', validators=[DataRequired()])
+    editItem = StringField('item', validators=[DataRequired()])

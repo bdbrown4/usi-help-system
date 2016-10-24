@@ -1,15 +1,18 @@
 from main import app
-from flask import render_template,flash,redirect,url_for
+from flask import render_template,flash,redirect,url_for,request
 from models import Item
-from forms import ItemForm, DelForm
+from forms import ItemForm, DelForm, EditForm
 from google.appengine.ext import ndb
 import uuid
 
+
 @app.route('/',methods=['GET','POST'])
 def index():
-    form=ItemForm()
+    addForm=ItemForm()
     delForm = DelForm()
+    editForm = EditForm()
     itemsOfInterest = Item.query()
+    #makes database if it doesn't exist...
     if len(itemsOfInterest.fetch(None))==0:
         mower=Item(id=str(uuid.uuid1()), item='Lawn Mower')
         eater=Item(id=str(uuid.uuid1()),item='Weed Eater')
@@ -23,13 +26,21 @@ def index():
         eater.put()
         itemsOfInterest = Item.query()
     print "The query length is "+str(len(itemsOfInterest.fetch(None)))
-    if form.validate_on_submit():
-        newItem = Item(id=str(uuid.uuid1()),item=form.item.data)
-        print("myUUID is "+newItem.id)
-        newItem.put()
-        flash('New item added!')
+    if request.form.has_key("edit") and editForm.validate_on_submit():  # If edit button press & something in edit box then...
+        myItems = Item.query()  # get item list
+        for item in myItems:  # find correct item
+            print item
+            print item.id
+            if str(item.id) == str(editForm.id.data):
+                # Get item
+                item = item.key.get()
+                # Change item to edit box data
+                item.item = editForm.editItem.data
+                # Save item
+                item.put()
+        flash('Item Edited!')
         return redirect(url_for('index'))
-    if delForm.validate_on_submit():
+    elif request.form.has_key("delete") and delForm.validate_on_submit():
         myItems = Item.query()
         for item in myItems:
             print item
@@ -38,9 +49,17 @@ def index():
                 ndb.delete_multi([item.key])
         flash('Item deleted!')
         return redirect(url_for('index'))
+    elif request.form.has_key("add") and addForm.validate_on_submit():
+        newItem = Item(id=str(uuid.uuid1()),item=addForm.item.data)
+        print("myUUID is "+newItem.id)
+        newItem.put()
+        flash('New item added!')
+        return redirect(url_for('index'))
     return render_template('index.html',
                            title='USI Help System',
                            itemsOfInterest=itemsOfInterest,
-                           form=form,
-                           delForm=delForm
+                           addForm=addForm,
+                           delForm=delForm,
+                           editForm=editForm
                            )
+
