@@ -52,6 +52,10 @@ def server_error(e):
 def form():
     return render_template('form.html')
 
+@app.route('/questiontree')
+def questiontree():
+    return render_template('questiontree.html')
+
 @app.route('/submitted', methods=['POST'])
 def submitted_form():
     name = request.form['name']
