@@ -66,11 +66,13 @@ def index():
 def testTree():
     myTree = BinaryTree("Maud")
     myTree.insertLeft("Bob")
-    myTree.insertRight("Tony")
     myTree.insertRight("Steven")
+    myTree.insertLeft("Tom")
+    myTree.insertRight("Jerry")
     myTree.printTree(myTree)
-    return redirect(url_for('questiontree'))
     return render_template('questiontree.html',
-                           myTree = str(myTree)
+                           myTree = myTree.getNodeValue(),
+                           myTreeLeft = myTree.getLeftChild(),
+                           myTreeRight = myTree.getRightChild()
                            )
 

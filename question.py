@@ -7,14 +7,18 @@ import uuid
 
 # test tree
 
-@app.route('/question',methods=['GET','POST'])
-def testTree():
-    myTree = BinaryTree("Maud")
-    myTree.insertLeft("Bob")
-    myTree.insertRight("Tony")
-    myTree.insertRight("Steven")
-    myTree.printTree(myTree)
-    return redirect(url_for('questiontree'))
-    return render_template('questiontree.html',
-                           myTree = str(myTree.printTree(myTree))
-                           )
+# @app.route('/question',methods=['GET','POST'])
+# def testTree():
+#     myTree = BinaryTree("Maud")
+#     myTree.insertLeft("Bob")
+#     myTree.insertRight("Tony")
+#     myTree.insertRight("Steven")
+#     myTree.insertLeft("Mike")
+#     myTree.printTree(myTree)
+#     myTree.getLeftChild()
+#     myTree.getNodeValue()
+#     myTree.getRightChild()
+#     return redirect(url_for('questiontree'))
+#     return render_template('questiontree.html',
+#                            myTree = myTree
+#                            )

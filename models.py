@@ -45,7 +45,7 @@ class User(ndb.Model):
 # simple binary tree
 # in this implementation, a node is inserted between an existing node and the root
 
-class BinaryTree():
+class BinaryTree(ndb.Model):
 
     def __init__(self,rootid):
       self.left = None
@@ -54,8 +54,12 @@ class BinaryTree():
 
     def getLeftChild(self):
         return self.left
+    def setLeftChild(self,value):
+        self.left = value
     def getRightChild(self):
         return self.right
+    def setRightChild(self,value):
+        self.right = value
     def setNodeValue(self,value):
         self.rootid = value
     def getNodeValue(self):
@@ -74,8 +78,8 @@ class BinaryTree():
             self.left = BinaryTree(newNode)
         else:
             tree = BinaryTree(newNode)
-            self.left = tree
             tree.left = self.left
+            self.left = tree
 
     def printTree(self,tree):
         if tree != None:

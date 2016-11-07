@@ -27,7 +27,7 @@
         </form>
         <form action="" method="post" name="post">
             {{ editForm.hidden_tag() }}
-            {% if item.id == editForm.id.data %}
+            {% if item.id == editForm.id.data and formType == edit%}
             <p class="editText" id="editText">{{editForm.editItem(size=30,maxlength=140,value=item.item)}}</p>
             {%endif%}
             <input type="hidden" name="id" value="{{ item.id }}">
