@@ -14,6 +14,20 @@ class Item(ndb.Model):
     def addModel(self,model):
         self.models.append(model)
 
+class Contact(ndb.Model):
+
+    #Stores comment along with name and email for reply purposes
+    #Currently stored contacts can only be deleted through admin server
+    name=ndb.StringProperty()
+    email=ndb.StringProperty()
+    comments=ndb.TextProperty()
+
+    def __init__(self,*args,**kwargs):
+        super(Contact, self).__init__(*args, **kwargs)
+        if kwargs.has_key('name'): self.id=kwargs['name']
+        if kwargs.has_key('email'): self.item=kwargs['email']
+        if kwargs.has_key('comments'): self.item = kwargs['comments']
+
 class User(ndb.Model):
 
     def __init__(self,id,nickname,email):

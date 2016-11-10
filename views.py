@@ -1,6 +1,6 @@
 from main import app
 from flask import render_template,flash,redirect,url_for,request
-from models import Item, BinaryTree
+from models import Item, BinaryTree, Contact
 from forms import ItemForm, DelForm, EditForm
 from google.appengine.ext import ndb
 import uuid
@@ -75,4 +75,23 @@ def testTree():
                            myTreeLeft = myTree.getLeftChild(),
                            myTreeRight = myTree.getRightChild()
                            )
+
+
+@app.route('/submittedContacts', methods=['POST'])
+def submitted_form():
+    #Get info from fields
+    name = request.form['name']
+    email = request.form['email']
+    comments = request.form['comments']
+    #use Contact constructor to make db item
+    contactObj=Contact(name=request.form['name'],
+                 email=request.form['email'],
+                 comments=request.form['comments'])
+    #Store obj in database
+    contactObj.put()
+    return render_template(
+        'submittedContacts.html',
+        name=name,
+        email=email,
+        comments=comments)
 
