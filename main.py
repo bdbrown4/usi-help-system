@@ -48,22 +48,6 @@ def server_error(e):
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
 
-@app.route('/form')
-def form():
-    return render_template('form.html')
-
-@app.route('/questiontree')
-def questiontree():
-    return render_template('questiontree.html')
-
-
-# @app.route('/submittedContacts')
-# def submitted_contacts():
-#     messages = Contact.query() #get all messages from contact class
-#     return render_template(
-#         'submittedContacts.html',
-#         messages=messages)
-
 def hello():
     return 'Hello World!'
 

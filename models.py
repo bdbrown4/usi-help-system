@@ -1,4 +1,5 @@
 from google.appengine.ext import ndb
+import uuid
 
 class Item(ndb.Model):
 
@@ -27,6 +28,64 @@ class Contact(ndb.Model):
         if kwargs.has_key('name'): self.id=kwargs['name']
         if kwargs.has_key('email'): self.item=kwargs['email']
         if kwargs.has_key('comments'): self.item = kwargs['comments']
+
+class Category:
+    #id=""
+    name=""
+
+    def __init__(self,name,lft=None,rgt=None):
+        #self.id=uuid.uuid1()
+        self.name=name
+
+class Problem:
+    problem=""
+    solution=""
+    def __init__(self,problem,solution):
+        self.problem=problem
+        self.solution=solution
+
+class Node:
+    payload=""
+    id=""
+    lft=None
+    rgt=None
+    root=""
+
+    def __init__(self,payload,lft=None,rgt=None):
+        self.id=uuid.uuid1()
+        self.payload=payload
+        self.lft=lft
+        self.rgt=rgt
+
+    # def addNodes(self,newCat):
+
+    def addSibling(self,sibNode,newNode):
+        if sibNode.rgt==None: sibNode.rgt=newNode
+        else: self.addSibling(sibNode.rgt,newNode)
+
+    def addChild(self,child):
+        if self.lft==None: self.lft=child;
+        else: self.addSibling(self.lft,child)
+
+    def addSubNode(self,payload):
+        retNode=Node(payload,None,None)
+        self.addChild(retNode)
+        return retNode
+
+    def nodeType(self):
+        if isinstance(self.payload, Category): return "Category"
+        else: return "Problem"
+
+    def returnRootChildren(self):
+        myKids=[]
+        myNode=self.lft;
+        while myNode!=None:
+            myKids.append(myNode)
+            myNode=myNode.rgt
+        return myKids
+
+    # def addProblem(self,name):
+    #    retProb=Problem(name,self.rgt,self.rgt+1)
 
 class User(ndb.Model):
 

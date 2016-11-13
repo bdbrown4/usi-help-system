@@ -1,6 +1,6 @@
 from main import app
 from flask import render_template,flash,redirect,url_for,request
-from models import Item, BinaryTree, Contact
+from models import Item, BinaryTree, Contact, Category, Problem, Node
 from forms import ItemForm, DelForm, EditForm
 from google.appengine.ext import ndb
 import uuid
@@ -62,6 +62,11 @@ def index():
                            delForm=delForm,
                            editForm=editForm
                            )
+
+@app.route('/form')
+def form():
+    return render_template('form.html')
+
 @app.route('/question',methods=['GET','POST'])
 def testTree():
     myTree = BinaryTree("Maud")
@@ -95,3 +100,82 @@ def submitted_form():
         email=email,
         comments=comments)
 
+
+roots = []
+
+@app.route('/testTree',methods=['GET','POST'])
+def test():
+    if request.form.has_key("changeForm"):
+        print(request.form['selectedCat'])
+        myObj = None
+        for node in roots:
+            if node.nodeType() == "Category" and node.payload.name == request.form['selectedCat']:
+                myObj = node
+                break
+            elif node.nodeType() == "Problem" and node.payload.problem == request.form['selectedCat']:
+                myObj = node
+                break
+        if myObj!=None:
+            del roots[:]
+            for thing in myObj.returnRootChildren():
+                roots.append(thing)
+    elif len(roots) == 0:
+        r1 = Node(Category("Lawn Equipment"))
+        roots.append(r1)
+        lm = r1.addSubNode(Category("Lawn Mower"))
+        we = r1.addSubNode(Category("Weed Eater"))
+        r1.addSubNode(Category("Edger"))
+
+        r2 = Node(Category("Mobile Phone"))
+        rr2 = r2.addSubNode(Problem("Are you having a problem?", None))
+        roots.append(r2);
+        gp = rr2.addSubNode(Problem("Does the lawn mower have gas?", None))
+        mnoises = rr2.addSubNode(Problem("Is the lawn mower making noises?", None))
+        gp.addSubNode(Problem(None, "You don't have any gas!"))
+
+        def spaceMe(scount):
+            spaceStr = ""
+            while scount > 0:
+                spaceStr += " ";
+                scount -= 1
+            return spaceStr
+
+        def payloadVal(payload):
+            if payload.problem != None:
+                return payload.problem
+            else:
+                return payload.solution
+
+        def printTree(myNode, scount=0):
+            if isinstance(myNode.payload, Category):
+                if myNode.rgt == None and myNode.lft == None:
+                    print spaceMe(scount) + myNode.payload.name
+                else:
+                    if myNode.lft != None:
+                        print spaceMe(scount) + myNode.payload.name
+                        printTree(myNode.lft, scount + 4)
+                    if myNode.rgt != None:
+                        if myNode.lft == None: print spaceMe(scount) + myNode.payload.name
+                        printTree(myNode.rgt, scount)
+            else:
+                if myNode.rgt == None and myNode.lft == None:
+                    print spaceMe(scount) + payloadVal(myNode.payload)
+                else:
+                    if myNode.lft != None:
+                        print spaceMe(scount) + payloadVal(myNode.payload)
+                        printTree(myNode.lft, scount + 4)
+                    if myNode.rgt != None:
+                        if myNode.lft == None:
+                            print spaceMe(scount) + payloadVal(myNode.payload)
+                        printTree(myNode.rgt, scount)
+
+        we.addSubNode(Category("Torro"))
+        honda = lm.addSubNode(Category("Honda"))
+        bd = lm.addSubNode(Category("B&D"))
+        honda.addSubNode(Category("WOW"))
+        bd.addSubNode(Category("itWORKS!"))
+        printTree(r1)
+        printTree(r2)
+    return render_template("testindex.html",
+                           roots=roots
+                           )

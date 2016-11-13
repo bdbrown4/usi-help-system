@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form action="" method="post" name="post">
+<input type="hidden" name="changeForm"/>
+<select name="selectedCat" onchange="this.form.submit()">
+{% for node in roots %}
+    <option>
+        {% if node.nodeType()=="Category" %}
+            {{ node.payload.name }}
+        {%endif%}
+        {% if node.nodeType()=="Problem"%}
+            {% if node.payload.solution==None %}
+                {{ node.payload.problem }}
+            {% endif %}
+            {% if node.payload.problem==None %}
+                {{ node.payload.solution }}
+            {% endif %}
+        {% endif %}
+    </option>
+{% endfor %}
+</select>
+<input type="submit" value="Submit Category" id="category" name="category"/>
+<ul>
+    <li>
+
+    </li>
+</ul>
+</form>
+
+{% endblock %}
