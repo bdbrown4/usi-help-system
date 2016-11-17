@@ -133,49 +133,17 @@ def test():
         mnoises = rr2.addSubNode(Problem("Is the lawn mower making noises?", None))
         gp.addSubNode(Problem(None, "You don't have any gas!"))
 
-        def spaceMe(scount):
-            spaceStr = ""
-            while scount > 0:
-                spaceStr += " ";
-                scount -= 1
-            return spaceStr
-
-        def payloadVal(payload):
-            if payload.problem != None:
-                return payload.problem
-            else:
-                return payload.solution
-
-        def printTree(myNode, scount=0):
-            if isinstance(myNode.payload, Category):
-                if myNode.rgt == None and myNode.lft == None:
-                    print spaceMe(scount) + myNode.payload.name
-                else:
-                    if myNode.lft != None:
-                        print spaceMe(scount) + myNode.payload.name
-                        printTree(myNode.lft, scount + 4)
-                    if myNode.rgt != None:
-                        if myNode.lft == None: print spaceMe(scount) + myNode.payload.name
-                        printTree(myNode.rgt, scount)
-            else:
-                if myNode.rgt == None and myNode.lft == None:
-                    print spaceMe(scount) + payloadVal(myNode.payload)
-                else:
-                    if myNode.lft != None:
-                        print spaceMe(scount) + payloadVal(myNode.payload)
-                        printTree(myNode.lft, scount + 4)
-                    if myNode.rgt != None:
-                        if myNode.lft == None:
-                            print spaceMe(scount) + payloadVal(myNode.payload)
-                        printTree(myNode.rgt, scount)
-
         we.addSubNode(Category("Torro"))
         honda = lm.addSubNode(Category("Honda"))
         bd = lm.addSubNode(Category("B&D"))
         honda.addSubNode(Category("WOW"))
         bd.addSubNode(Category("itWORKS!"))
-        printTree(r1)
-        printTree(r2)
+        r1.printTree()
+        r2.printTree()
+        treeDict = r1.convertTree()
+        #r2.convertTree()
+
+
     return render_template("testindex.html",
                            roots=roots
                            )

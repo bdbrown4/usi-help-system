@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 import uuid
+import ast
 
 class Item(ndb.Model):
 
@@ -29,33 +30,46 @@ class Contact(ndb.Model):
         if kwargs.has_key('email'): self.item=kwargs['email']
         if kwargs.has_key('comments'): self.item = kwargs['comments']
 
-class Category:
+class Category(ndb.Model):
     #id=""
-    name=""
+    name=ndb.StringProperty()
+    id=ndb.StringProperty()
 
-    def __init__(self,name,lft=None,rgt=None):
-        #self.id=uuid.uuid1()
+    def __init__(self,name,*args,**kwargs):
+        super(Category, self).__init__(*args, **kwargs)
+        self.id=str(uuid.uuid1())
         self.name=name
 
-class Problem:
-    problem=""
-    solution=""
-    def __init__(self,problem,solution):
+class Problem(ndb.Model):
+    problem=ndb.StringProperty()
+    solution=ndb.StringProperty()
+    id=ndb.StringProperty()
+
+    def __init__(self,problem,solution,*args,**kwargs):
+        super(Problem, self).__init__(*args, **kwargs)
+        self.id=str(uuid.uuid1())
         self.problem=problem
         self.solution=solution
 
-class Node:
-    payload=""
-    id=""
-    lft=None
-    rgt=None
-    root=""
+class Node(ndb.Model):
+    payload=ndb.PickleProperty()
+    id=ndb.StringProperty()
+    lft=ndb.PickleProperty()
+    rgt=ndb.PickleProperty()
 
-    def __init__(self,payload,lft=None,rgt=None):
-        self.id=uuid.uuid1()
+    def createTree(self,treeString):
+        treeDict=ast.literal_eval(treeString)
+        
+
+
+    def __init__(self,payload,lft=None,rgt=None,*args,**kwargs):
+        super(Node, self).__init__(*args, **kwargs)
+        self.id=str(uuid.uuid1())
         self.payload=payload
+        payload.put()
         self.lft=lft
         self.rgt=rgt
+
 
     # def addNodes(self,newCat):
 
@@ -83,6 +97,70 @@ class Node:
             myKids.append(myNode)
             myNode=myNode.rgt
         return myKids
+
+    def spaceMe(self,scount):
+        spaceStr = ""
+        while scount > 0:
+            spaceStr += " ";
+            scount -= 1
+        return spaceStr
+
+    def payloadVal(self,payload):
+        if payload.problem != None:
+            return payload.problem
+        else:
+            return payload.solution
+
+    def printTree(self,myNode=None, scount=0):
+        if myNode == None:
+            myNode=self
+        if isinstance(myNode.payload, Category):
+            if myNode.rgt == None and myNode.lft == None:
+                print self.spaceMe(scount) + myNode.payload.name
+            else:
+                if myNode.lft != None:
+                    print self.spaceMe(scount) + myNode.payload.name
+                    self.printTree(myNode.lft, scount + 4)
+                if myNode.rgt != None:
+                    if myNode.lft == None: print self.spaceMe(scount) + myNode.payload.name
+                    self.printTree(myNode.rgt, scount)
+        else:
+            if myNode.rgt == None and myNode.lft == None:
+                print self.spaceMe(scount) + self.payloadVal(myNode.payload)
+            else:
+                if myNode.lft != None:
+                    print self.spaceMe(scount) + self.payloadVal(myNode.payload)
+                    self.printTree(myNode.lft, scount + 4)
+                if myNode.rgt != None:
+                    if myNode.lft == None:
+                        print self.spaceMe(scount) + self.payloadVal(myNode.payload)
+                    self.printTree(myNode.rgt, scount)
+
+    def convertTree(self, myNode=None, scount=0):
+
+        if myNode == None:
+            myNode = self
+
+        if myNode.rgt == None and myNode.lft == None:
+            print self.spaceMe(scount) + myNode.payload.id
+            return { 'node': myNode.payload.id }
+        else:
+            if myNode.lft != None:
+                if myNode.rgt == None:
+                    print self.spaceMe(
+                        scount) + "left guid: " + myNode.lft.payload.id + " node guid: " + myNode.payload.id
+                    return {'node':myNode.payload.id, 'lft':self.convertTree(myNode.lft, scount + 4)}
+                else:
+                    print self.spaceMe(
+                        scount) + "left guid: " + myNode.lft.payload.id + " node guid: " + myNode.payload.id + " right guid: " + myNode.rgt.payload.id
+                    return { 'node': myNode.payload.id, 'lft': self.convertTree(myNode.lft, scount + 4), 'rgt': self.convertTree(myNode.rgt, scount)}
+                self.convertTree(myNode.lft, scount + 4)
+            #if myNode.rgt != None:
+                #if myNode.lft == None:
+                    #print self.spaceMe(scount) + "right guid: " + myNode.rgt.payload.id + " node guid: " + myNode.payload.id
+                #self.convertTree(myNode.rgt, scount)
+
+
 
     # def addProblem(self,name):
     #    retProb=Problem(name,self.rgt,self.rgt+1)
