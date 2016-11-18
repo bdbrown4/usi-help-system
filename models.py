@@ -1,3 +1,5 @@
+import types
+
 from google.appengine.ext import ndb
 import uuid
 import ast
@@ -57,18 +59,32 @@ class Node(ndb.Model):
     lft=ndb.PickleProperty()
     rgt=ndb.PickleProperty()
 
-    def createTree(self,treeString):
-        treeDict=ast.literal_eval(treeString)
-        
+    def parseNode(self, inDict):
+        if (not inDict.has_key('lft') and not inDict.has_key('rgt')):
+            return Node(inDict['node'])
+        elif (inDict.has_key('lft') and not inDict.has_key('rgt')):
+            return Node(inDict['node'], lft=self.parseNode(inDict['lft']))
+        elif (inDict.has_key('rgt') and not inDict.has_key('lft')):
+            return Node(inDict['node'], rgt=self.parseNode(inDict['rgt']))
+        else:
+            return Node(inDict['node'], lft=self.parseNode(inDict['lft']), rgt=self.parseNode(inDict['rgt']))
 
-
-    def __init__(self,payload,lft=None,rgt=None,*args,**kwargs):
+    def __init__(self, payload, lft=None, rgt=None, *args, **kwargs):
         super(Node, self).__init__(*args, **kwargs)
-        self.id=str(uuid.uuid1())
-        self.payload=payload
-        payload.put()
-        self.lft=lft
-        self.rgt=rgt
+        if isinstance(payload, types.DictionaryType):
+            # treeDict=ast.literal_eval(payload)
+            myLft = self.parseNode(payload['lft'])
+            self.id = str(uuid.uuid1())
+            self.payload = payload
+            # payload.put()
+            self.lft = myLft
+            self.rgt = None
+        else:
+            self.id = str(uuid.uuid1())
+            self.payload = payload
+            #payload.put()
+            self.lft = lft
+            self.rgt = rgt
 
 
     # def addNodes(self,newCat):

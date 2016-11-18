@@ -139,9 +139,11 @@ def test():
         honda.addSubNode(Category("WOW"))
         bd.addSubNode(Category("itWORKS!"))
         r1.printTree()
-        r2.printTree()
+        #r2.printTree()
         treeDict = r1.convertTree()
         #r2.convertTree()
+        #treeDictPrint = Node(treeDict)
+        #treeDictPrint.printTree()
 
 
     return render_template("testindex.html",
