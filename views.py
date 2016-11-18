@@ -1,9 +1,10 @@
 from main import app
 from flask import render_template,flash,redirect,url_for,request
-from models import Item, BinaryTree, Contact, Category, Problem, Node
+from models import Item, UserClass, Contact, Category, Problem, Node
 from forms import ItemForm, DelForm, EditForm
 from google.appengine.ext import ndb
 import uuid
+import hashlib
 
 
 @app.route('/',methods=['GET','POST'])
@@ -67,20 +68,6 @@ def index():
 def form():
     return render_template('form.html')
 
-@app.route('/question',methods=['GET','POST'])
-def testTree():
-    myTree = BinaryTree("Maud")
-    myTree.insertLeft("Bob")
-    myTree.insertRight("Steven")
-    myTree.insertLeft("Tom")
-    myTree.insertRight("Jerry")
-    myTree.printTree(myTree)
-    return render_template('questiontree.html',
-                           myTree = myTree.getNodeValue(),
-                           myTreeLeft = myTree.getLeftChild(),
-                           myTreeRight = myTree.getRightChild()
-                           )
-
 
 @app.route('/submittedContacts', methods=['POST'])
 def submitted_form():
@@ -100,6 +87,37 @@ def submitted_form():
         email=email,
         comments=comments)
 
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
+@app.route('/registersubmitted', methods=['POST']) #https://docs.python.org/2/library/hashlib.html
+def registersub():
+    print("got in")
+    #get info from fields
+    username = request.form['username']
+    print("thats one")
+    email = request.form['email']
+    print("thats two")
+    #get password from field, create md5 hash for more secure storage
+    password = request.form['password']
+    h = hashlib.md5()
+    h.update(password)
+    passwordhash=h.hexdigest()
+    print(passwordhash)
+    print("got info")
+    #build user object
+    userObj = UserClass(username = request.form['username'],
+                        email = request.form['email'],
+                        password = passwordhash,
+                        rights='1')
+    print("built obj")
+    #Store user in db
+    userObj.put()
+    print("stored obj")
+    return render_template('registersubmitted.html',
+                            username=username)
 
 roots = []
 
@@ -147,5 +165,4 @@ def test():
 
 
     return render_template("testindex.html",
-                           roots=roots
-                           )
+                           roots=roots)

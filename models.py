@@ -176,80 +176,25 @@ class Node(ndb.Model):
                     #print self.spaceMe(scount) + "right guid: " + myNode.rgt.payload.id + " node guid: " + myNode.payload.id
                 #self.convertTree(myNode.rgt, scount)
 
-
-
     # def addProblem(self,name):
     #    retProb=Problem(name,self.rgt,self.rgt+1)
 
-class User(ndb.Model):
+class UserClass(ndb.Model):
+    # class UserClass():
+    # username, email, password for each account
+    # rights is the type of account:
+    # 0: Anonymous - can only view
+    # 1: Normal - can make edits as well as view content
+    # 2: Superuser - can make edits, view content, and restrict normal users
+    # 3: Admin - complete control over system
+    username = ndb.StringProperty()
+    email = ndb.StringProperty()
+    password = ndb.StringProperty()
+    rights = ndb.StringProperty()
 
-    def __init__(self,id,nickname,email):
-        self.id=id
-        self.nickname=nickname
-        self.email=email
-
-    def __repr__(self):
-        return '<User %r>' % (self.nickname)
-
-    @property
-    def is_active(self):
-        return True
-
-    @property
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
-
-    @property
-    def is_authenticated(self):
-        return True
-
-# simple binary tree
-# in this implementation, a node is inserted between an existing node and the root
-
-class BinaryTree(ndb.Model):
-
-    def __init__(self,rootid):
-      self.left = None
-      self.right = None
-      self.rootid = rootid
-
-    def getLeftChild(self):
-        return self.left
-    def setLeftChild(self,value):
-        self.left = value
-    def getRightChild(self):
-        return self.right
-    def setRightChild(self,value):
-        self.right = value
-    def setNodeValue(self,value):
-        self.rootid = value
-    def getNodeValue(self):
-        return self.rootid
-
-    def insertRight(self,newNode):
-        if self.right == None:
-            self.right = BinaryTree(newNode)
-        else:
-            tree = BinaryTree(newNode)
-            tree.right = self.right
-            self.right = tree
-
-    def insertLeft(self,newNode):
-        if self.left == None:
-            self.left = BinaryTree(newNode)
-        else:
-            tree = BinaryTree(newNode)
-            tree.left = self.left
-            self.left = tree
-
-    def printTree(self,tree):
-        if tree != None:
-            tree.printTree(tree.getLeftChild())
-            print(tree.getNodeValue())
-            tree.printTree(tree.getRightChild())
+    def __init__(self,*args, **kwargs):
+        super(UserClass, self).__init__(*args, **kwargs)
+        if kwargs.has_key('username'): self.name = kwargs['username']
+        if kwargs.has_key('email'): self.name = kwargs['email']
+        if kwargs.has_key('password'): self.name = kwargs['password']
+        if kwargs.has_key('rights'): self.name = kwargs['rights']
