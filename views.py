@@ -1,5 +1,5 @@
 from main import app
-from flask import render_template,flash,redirect,url_for,request
+from flask import render_template,flash,redirect,url_for,request,session
 from models import Item, UserClass, Contact, Category, Problem, Node
 from forms import ItemForm, DelForm, EditForm
 from google.appengine.ext import ndb
@@ -87,10 +87,59 @@ def submitted_form():
         email=email,
         comments=comments)
 
+@app.route('/logout')
+def logout():
+    #Clear session data to log out
+    session.clear()
+    return render_template('logout.html')
+
+#User inputs username/password
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+#app takes username/password and authenticates user
+@app.route('/authenticate', methods=['POST'])
+def authenticate():
+    userexists=False
+    #Get username and password from login form
+    username=request.form['username']
+    password=request.form['password']
+    #Hash password for comparison with hash entry in database
+    h = hashlib.md5()
+    h.update(password)
+    hashpassword = h.hexdigest()
+    #Print to console for troubleshooting
+    #print(username)
+    #print(hashpassword)
+    #Get list of usuers
+    users=UserClass.query()
+    #Compare username from form with every username in database
+    for user in users:
+        #print(user.username)
+        #If username found, set userexists true
+        if user.username==username:
+            userexists=True
+            #print(hashpassword)
+            # If username found, check password from form with password in databse for that username
+            if user.password==hashpassword:
+                #Set session data with username
+                session['username'] = username
+                flash('Logged in successfully.')
+                return render_template('authenticated.html')
+    #If login failed, tell user either username or password was bad, return to login form
+    flash('Login failed');
+    if userexists==False: flash('Username does not exist')
+    else: flash('Incorrect password')
+    return render_template('login.html')
 
 @app.route('/register')
 def register():
     return render_template('register.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/registersubmitted', methods=['POST']) #https://docs.python.org/2/library/hashlib.html
 def registersub():
