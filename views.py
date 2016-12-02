@@ -1,10 +1,12 @@
 from main import app
 from flask import render_template,flash,redirect,url_for,request,session
-from models import Item, UserClass, Contact, Category, Problem, Node
+from models import Item, UserClass, Contact, Category, Problem, Node, Tree
 from forms import ItemForm, DelForm, EditForm
 from google.appengine.ext import ndb
 import uuid
 import hashlib
+import config
+import ast
 
 
 @app.route('/',methods=['GET','POST'])
@@ -170,6 +172,16 @@ def registersub():
 
 roots = []
 
+def storeCat(myCat):
+    myCat2=Category(myCat)
+    myCat2.put()
+    return myCat2
+
+def storeProb(myProb, myAns):
+    myProb2=Problem(myProb,myAns)
+    myProb2.put()
+    return myProb2
+
 @app.route('/testTree',methods=['GET','POST'])
 def test():
     if request.form.has_key("changeForm"):
@@ -186,31 +198,42 @@ def test():
             del roots[:]
             for thing in myObj.returnRootChildren():
                 roots.append(thing)
+    #else
     elif len(roots) == 0:
-        r1 = Node(Category("Lawn Equipment"))
-        roots.append(r1)
-        lm = r1.addSubNode(Category("Lawn Mower"))
-        we = r1.addSubNode(Category("Weed Eater"))
-        r1.addSubNode(Category("Edger"))
+        metaData=Tree.query()
+        if len(metaData.fetch(None))==0:
+            r1 = Node(storeCat("Lawn Equipment"))
+            roots.append(r1)
+            lm = r1.addSubNode(storeCat("Lawn Mower"))
+            we = r1.addSubNode(storeCat("Weed Eater"))
+            r1.addSubNode(storeCat("Edger"))
 
-        r2 = Node(Category("Mobile Phone"))
-        rr2 = r2.addSubNode(Problem("Are you having a problem?", None))
-        roots.append(r2);
-        gp = rr2.addSubNode(Problem("Does the lawn mower have gas?", None))
-        mnoises = rr2.addSubNode(Problem("Is the lawn mower making noises?", None))
-        gp.addSubNode(Problem(None, "You don't have any gas!"))
+            r2 = Node(storeCat("Mobile Phone"))
+            rr2 = r2.addSubNode(storeProb("Are you having a problem?", None))
+            roots.append(r2);
+            gp = rr2.addSubNode(storeProb("Does the lawn mower have gas?", None))
+            rr2.addSubNode(storeProb("Is the lawn mower making noises?", None))
+            gp.addSubNode(storeProb(None, "You don't have any gas!"))
 
-        we.addSubNode(Category("Torro"))
-        honda = lm.addSubNode(Category("Honda"))
-        bd = lm.addSubNode(Category("B&D"))
-        honda.addSubNode(Category("WOW"))
-        bd.addSubNode(Category("itWORKS!"))
-        r1.printTree()
-        #r2.printTree()
-        treeDict = r1.convertTree()
-        #r2.convertTree()
-        #treeDictPrint = Node(treeDict)
-        #treeDictPrint.printTree()
+            we.addSubNode(storeCat("Torro"))
+            honda = lm.addSubNode(storeCat("Honda"))
+            bd = lm.addSubNode(storeCat("B&D"))
+            honda.addSubNode(storeProb("WOW",None))
+            bd.addSubNode(storeCat("itWORKS!"))
+            r1.printTree()
+
+            treeDict = r1.convertTree()
+            Tree(str(r1.convertTree())).put()
+            Tree(str(r2.convertTree())).put()
+            r1Prime = Node(treeDict)
+            r1Prime.printTree()
+        else:
+            for probsol in Problem.query(): config.probList.append(probsol)
+            for cat in Category.query(): config.catList.append(cat)
+            trees = Tree.query()  # get item list
+            for tree in trees:  # find correct item
+                roots.append(Node(ast.literal_eval(tree.tree)))
+
 
 
     return render_template("testindex.html",

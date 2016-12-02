@@ -1,4 +1,6 @@
 import types
+import config
+import ast
 
 from google.appengine.ext import ndb
 import uuid
@@ -37,21 +39,21 @@ class Category(ndb.Model):
     name=ndb.StringProperty()
     id=ndb.StringProperty()
 
-    def __init__(self,name,*args,**kwargs):
+    def __init__(self,*args,**kwargs):
         super(Category, self).__init__(*args, **kwargs)
-        self.id=str(uuid.uuid1())
-        self.name=name
+        if kwargs.has_key('name'): self.id=kwargs['name']
+        if kwargs.has_key('id'): self.id=kwargs['id']
 
 class Problem(ndb.Model):
     problem=ndb.StringProperty()
     solution=ndb.StringProperty()
     id=ndb.StringProperty()
 
-    def __init__(self,problem,solution,*args,**kwargs):
+    def __init__(self,*args,**kwargs):
         super(Problem, self).__init__(*args, **kwargs)
-        self.id=str(uuid.uuid1())
-        self.problem=problem
-        self.solution=solution
+        if kwargs.has_key('problem'): self.id=kwargs['problem']
+        if kwargs.has_key('solution'): self.id=kwargs['solution']
+        if kwargs.has_key('id'): self.id=kwargs['id']
 
 class Node(ndb.Model):
     payload=ndb.PickleProperty()
@@ -59,23 +61,33 @@ class Node(ndb.Model):
     lft=ndb.PickleProperty()
     rgt=ndb.PickleProperty()
 
+    def getObj(self, guid):
+        for myCat in config.catList:
+            if myCat.id==guid:
+                return myCat
+        for myProb in config.probList:
+            if myProb.id==guid:
+                return myProb
+        return None
+
+
     def parseNode(self, inDict):
         if (not inDict.has_key('lft') and not inDict.has_key('rgt')):
-            return Node(inDict['node'])
+            return Node(self.getObj(inDict['node']))
         elif (inDict.has_key('lft') and not inDict.has_key('rgt')):
-            return Node(inDict['node'], lft=self.parseNode(inDict['lft']))
+            return Node(self.getObj(inDict['node']), lft=self.parseNode(inDict['lft']))
         elif (inDict.has_key('rgt') and not inDict.has_key('lft')):
-            return Node(inDict['node'], rgt=self.parseNode(inDict['rgt']))
+            return Node(self.getObj(inDict['node']), rgt=self.parseNode(inDict['rgt']))
         else:
-            return Node(inDict['node'], lft=self.parseNode(inDict['lft']), rgt=self.parseNode(inDict['rgt']))
+            return Node(self.getObj(inDict['node']), lft=self.parseNode(inDict['lft']), rgt=self.parseNode(inDict['rgt']))
 
     def __init__(self, payload, lft=None, rgt=None, *args, **kwargs):
         super(Node, self).__init__(*args, **kwargs)
         if isinstance(payload, types.DictionaryType):
             # treeDict=ast.literal_eval(payload)
             myLft = self.parseNode(payload['lft'])
-            self.id = str(uuid.uuid1())
-            self.payload = payload
+            self.id = payload['node']
+            self.payload = self.getObj(payload['node'])
             # payload.put()
             self.lft = myLft
             self.rgt = None
@@ -133,23 +145,30 @@ class Node(ndb.Model):
         if isinstance(myNode.payload, Category):
             if myNode.rgt == None and myNode.lft == None:
                 print self.spaceMe(scount) + myNode.payload.name
+                #config.catList.append(myNode.payload)
             else:
                 if myNode.lft != None:
                     print self.spaceMe(scount) + myNode.payload.name
+                    #config.catList.append(myNode.payload)
                     self.printTree(myNode.lft, scount + 4)
                 if myNode.rgt != None:
                     if myNode.lft == None: print self.spaceMe(scount) + myNode.payload.name
+                    #config.catList.append(myNode.payload)
                     self.printTree(myNode.rgt, scount)
+
         else:
             if myNode.rgt == None and myNode.lft == None:
                 print self.spaceMe(scount) + self.payloadVal(myNode.payload)
+                #config.probList.append(myNode.payload)
             else:
                 if myNode.lft != None:
                     print self.spaceMe(scount) + self.payloadVal(myNode.payload)
+                    #config.probList.append(myNode.payload)
                     self.printTree(myNode.lft, scount + 4)
                 if myNode.rgt != None:
                     if myNode.lft == None:
                         print self.spaceMe(scount) + self.payloadVal(myNode.payload)
+                        #config.probList.append(myNode.payload)
                     self.printTree(myNode.rgt, scount)
 
     def convertTree(self, myNode=None, scount=0):
@@ -178,6 +197,14 @@ class Node(ndb.Model):
 
     # def addProblem(self,name):
     #    retProb=Problem(name,self.rgt,self.rgt+1)
+
+class Tree(ndb.Model):
+    tree = ndb.StringProperty()
+
+    def __init__(self,*args,**kwargs):
+        super(Tree, self).__init__(*args, **kwargs)
+        if kwargs.has_key('tree'): self.id=kwargs['tree']
+
 
 class UserClass(ndb.Model):
     # class UserClass():

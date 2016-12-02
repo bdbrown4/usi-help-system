@@ -7,3 +7,6 @@ OPENID_PROVIDERS = [
     {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'},
     {'name': 'WordPress', 'url': 'https://<username>'+'.wordpress.com'}
 ]
+
+catList=[]
+probList=[]
