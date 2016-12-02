@@ -184,14 +184,10 @@ def storeProb(myProb, myAns):
 
 @app.route('/testTree',methods=['GET','POST'])
 def test():
-    if request.form.has_key("changeForm"):
-        print(request.form['selectedCat'])
+    if request.form.has_key("changeCat") or request.form.has_key("changeProb"):
         myObj = None
         for node in roots:
-            if node.nodeType() == "Category" and node.payload.name == request.form['selectedCat']:
-                myObj = node
-                break
-            elif node.nodeType() == "Problem" and node.payload.problem == request.form['selectedCat']:
+            if (node.nodeType() == "Category" and node.payload.name == request.form['selectedCat']) or node.nodeType() == "Problem":
                 myObj = node
                 break
         if myObj!=None:
