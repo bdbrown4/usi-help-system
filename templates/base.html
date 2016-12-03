@@ -7,11 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head></head>
-<body>
+  <script src="https://maxcdn.bootst/usr/lib/googleAppSDK/google_appenginerapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style="margin:3%;background-color:#dcdcdc">
 <!-- fixing github -->
+<br/>
 <nav class="navbar navbar-inverse navbar-fixed-top">
+    <img style="float:left" src="/static/logodraft.jpg" alt="Logo" height="70" width="155">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -20,7 +22,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{url_for('index')}}">USI Help System</a>
+          <!--<a class="navbar-brand" href="{{url_for('index')}}">USI Help System</a>   -->
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -35,11 +37,14 @@
             {% endif %}
 
             {% if 'username' in session %}
-            <li>You are logged in as {{ session['username'] }}</li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a  href="/logout">Logout</a></li>
             {% endif %}
           </ul>
+            {% if 'username' in session %}
+            <p style="float:right;line-height:3;color:white">You are logged in as {{ session['username'] }}</p>
+            {% endif %}
         </div><!--/.nav-collapse -->
+
       </div>
     </nav>
 
