@@ -168,7 +168,9 @@ def registersub():
     userObj.put()
     print("stored obj")
     return render_template('registersubmitted.html',
-                            username=username)roots = []
+                            username=username)
+
+
 
 def storeCat(myCat):
     myCat2=Category(myCat)
@@ -180,6 +182,11 @@ def storeProb(myProb, myAns):
     myProb2.put()
     return myProb2
 
+roots = []
+cats = []
+items = []
+models = []
+
 @app.route('/testTree',methods=['GET','POST'])
 def test():
     if request.form.has_key("changeCat") or request.form.has_key("changeProb"):
@@ -189,7 +196,24 @@ def test():
                 myObj = node
                 break
         if myObj!=None:
-            del roots[:]
+            for thing in myObj.returnRootChildren():
+                items.append(thing)
+    elif request.form.has_key("changeItem"):
+        myObj = None
+        for node in items:
+            if (node.nodeType() == "Category" and node.payload.name == request.form['selectedItem']):
+                myObj = node
+                break
+        if myObj != None:
+            for thing in myObj.returnRootChildren():
+                models.append(thing)
+    elif request.form.has_key("changeModel"):
+        myObj = None
+        for node in models:
+            if (node.nodeType() == "Category" and node.payload.name == request.form['selectedModel']):
+                myObj = node
+                break
+        if myObj != None:
             for thing in myObj.returnRootChildren():
                 roots.append(thing)
     #else
@@ -231,4 +255,7 @@ def test():
 
 
     return render_template("testindex.html",
-                           roots=roots)
+                           roots=roots,
+                           models=models,
+                           items=items,
+                           cats=cats)

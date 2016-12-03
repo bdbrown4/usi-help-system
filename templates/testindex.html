@@ -26,10 +26,10 @@
     </form>
     <form action="" method="post" name="post">
         <div class="col-md-3">
-            <input type="hidden" name="changeCat"/>
+            <input type="hidden" name="changeItem"/>
                 <h2>Please select your<br> Item of Interest</h2>
-                    <select name="selectedCat">
-                        {% for node in roots %}
+                    <select name="selectedItem">
+                        {% for node in items %}
                             <option>
                                 {% if node.nodeType()=="Category" %}
                                     {{ node.payload.name }}
@@ -42,10 +42,10 @@
     </form>
     <form action="" method="post" name="post">
         <div class="col-md-3">
-            <input type="hidden" name="changeCat"/>
+            <input type="hidden" name="changeModel"/>
                 <h2>Please select the Model</h2>
-                    <select name="selectedCat">
-                        {% for node in roots %}
+                    <select name="selectedModel">
+                        {% for node in models %}
                             <option>
                                 {% if node.nodeType()=="Category" %}
                                     {{ node.payload.name }}
