@@ -5,20 +5,31 @@
   <head>
     <title>Submit a form</title>
    <link rel="stylesheet" type="text/css" href="/static/style.css">
-  </head>
+    <style>
+        form {display: inline-block;
+              text-align: center;
+             }
+        textarea,input{float:right}
+        textarea{margin-left:90px}
+        label{float:left}
+        body {background-color:#dcdcdc}
+
+    </style>
+</head>
   <body>
     <div id="container">
       <div class="pagetitle">
-        <h1>Submit a form</h1>
+
       </div>
-      <div id="main">
-        <form method="post" action="/submittedContacts">
+      <div id="main" style="margin:auto;width:30%;padding:50px 0">
+        <h1>Submit a form</h1>
+          <form method="post" action="/submittedContacts">
           <label for="name">First/Last Name:</label>
-          <input type="text" name="name"><br />
+          <input type="text" name="name"><br /><br />
           <label for="email">Email address:</label>
-          <input type="email" name="email"><br />
+          <input type="email" name="email"><br /><br />
           <label for="comments">Comments:</label>
-          <textarea name="comments"></textarea><br />
+          <textarea name="comments"></textarea><br /><br />
           <input type="submit">
         </form>
       </div>

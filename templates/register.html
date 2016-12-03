@@ -1,14 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Register your shit mon</h1>
+<style>
+        form {display: inline-block;
+              text-align: center;
+             }
+        label{float:left}
+        body {background-color:#dcdcdc}
 
-<form method="post" action="/registersubmitted">
-          <label for="username">Username:</label>
-          <input type="text" name="username"><br />
-          <label for="email">Email address:</label>
-          <input type="email" name="email"><br />
-          <label for="password">Password:</label>
-          <input type="password" name="password"><br />
+</style>
+<body>
+
+<div id="regdiv" style="margin:auto;width:30%;padding:50px 0">
+<h1>Register your shit mon</h1>
+    <form method="post" action="/registersubmitted">
+    <div style="float:left;margin-right:50px" id="labels">
+        <label for="username">Username:</label><br /><br />
+        <label for="email">Email address:</label><br /><br />
+        <label for="password">Password:</label>
+    </div>
+    <div style="float:right" id="inputs">
+        <input type="text" name="username"><br /><br />
+          <input type="email" name="email"><br /><br />
+          <input type="password" name="password"><br /><br />
           <input type="submit">
+    </div>
+
+
         </form>
+</div>
+</body>
 {% endblock %}
