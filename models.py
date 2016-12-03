@@ -39,9 +39,10 @@ class Category(ndb.Model):
     name=ndb.StringProperty()
     id=ndb.StringProperty()
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self,name='',*args,**kwargs):
         super(Category, self).__init__(*args, **kwargs)
-        if kwargs.has_key('name'): self.id=kwargs['name']
+        if kwargs.has_key('name'): self.name=kwargs['name']
+        self.name=name
         if kwargs.has_key('id'): self.id=kwargs['id']
 
 class Problem(ndb.Model):
@@ -49,10 +50,12 @@ class Problem(ndb.Model):
     solution=ndb.StringProperty()
     id=ndb.StringProperty()
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self, problem=None, solution=None,*args,**kwargs):
         super(Problem, self).__init__(*args, **kwargs)
-        if kwargs.has_key('problem'): self.id=kwargs['problem']
-        if kwargs.has_key('solution'): self.id=kwargs['solution']
+        if kwargs.has_key('problem'): self.problem=kwargs['problem']
+        self.problem=problem
+        if kwargs.has_key('solution'): self.solution=kwargs['solution']
+        self.solution=solution
         if kwargs.has_key('id'): self.id=kwargs['id']
 
 class Node(ndb.Model):
@@ -203,7 +206,7 @@ class Tree(ndb.Model):
 
     def __init__(self,*args,**kwargs):
         super(Tree, self).__init__(*args, **kwargs)
-        if kwargs.has_key('tree'): self.id=kwargs['tree']
+        if kwargs.has_key('tree'): self.tree=kwargs['tree']
 
 
 class UserClass(ndb.Model):

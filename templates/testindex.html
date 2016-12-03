@@ -9,7 +9,7 @@
 <body style="margin:3%">
 <div class="row">
     <form action="" method="post" name="post">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <input type="hidden" name="changeCat"/>
                 <h2>Please select a Category</h2>
                     <select name="selectedCat">
@@ -25,7 +25,23 @@
         </div>
     </form>
     <form action="" method="post" name="post">
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <input type="hidden" name="changeCat"/>
+                <h2>Please select your<br> Item of Interest</h2>
+                    <select name="selectedCat">
+                        {% for node in roots %}
+                            <option>
+                                {% if node.nodeType()=="Category" %}
+                                    {{ node.payload.name }}
+                                {%endif%}
+                            </option>
+                        {% endfor %}
+                    </select>
+            <input type="submit" value="Submit Category" id="category" name="category"/>
+        </div>
+    </form>
+    <form action="" method="post" name="post">
+        <div class="col-md-3">
             <input type="hidden" name="changeCat"/>
                 <h2>Please select the Model</h2>
                     <select name="selectedCat">
@@ -41,7 +57,7 @@
         </div>
     </form>
     <form action="" method="post" name="post">
-        <div class="col-md-4" id="problems" name="problems">
+        <div class="col-md-3" id="problems" name="problems">
                 <ul>
                 <input type="hidden" name="changeProb">
                     {%  for node in roots %}
