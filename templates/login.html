@@ -1,12 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Dare you enter my magical realm?</h1>
+<head>
+    <link rel="stylesheet" href="static/bootstrap/css/bootstraplogin.css">
+    <style>
+        form {display: inline-block;
+              text-align: center;
+             }
+        input{margin-left:50px}
+        body {background-color:#dcdcdc}
 
-<form method="post" action="/authenticate">
+    </style>
+</head>
+<body>
+
+
+<div id="logdiv" style="margin:auto;width:30%;padding:50px 0">
+<h1>Dare you enter my magical realm?</h1>
+    <form method="post" action="/authenticate">
           <label for="username">Username:</label>
-          <input type="text" name="username"><br />
+          <input type="text" name="username"><br /><br />
           <label for="password">Password:</label>
-          <input type="password" name="password"><br />
+          <input type="password" name="password"><br /><br />
           <input type="submit">
-        </form>
+</form>
+</div>
+</body>
+
 {% endblock %}
