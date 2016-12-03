@@ -17,11 +17,16 @@ handlers:
   static_files: static/Index.js
   upload: static/Index.js
 
-- url: .*
-  script: main.app
+- url: /logodraft\.jpg
+  static_files: logodraft.jpg
+  upload: logodraft\.jpg
 
 - url: /static
   static_dir: static
+
+- url: .*
+  script: main.app
+
 
 libraries:
 - name: webapp2

@@ -9,8 +9,8 @@ import config
 import ast
 
 
-@app.route('/',methods=['GET','POST'])
-def index():
+@app.route('/testTree',methods=['GET','POST'])
+def test():
     addForm=ItemForm()
     delForm = DelForm()
     editForm = EditForm()
@@ -182,8 +182,8 @@ def storeProb(myProb, myAns):
     myProb2.put()
     return myProb2
 
-@app.route('/testTree',methods=['GET','POST'])
-def test():
+@app.route('/',methods=['GET','POST'])
+def index():
     if request.form.has_key("changeCat") or request.form.has_key("changeProb"):
         myObj = None
         for node in roots:
