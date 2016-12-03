@@ -145,19 +145,19 @@ def about():
 
 @app.route('/registersubmitted', methods=['POST']) #https://docs.python.org/2/library/hashlib.html
 def registersub():
-    print("got in")
     #get info from fields
     username = request.form['username']
-    print("thats one")
     email = request.form['email']
-    print("thats two")
     #get password from field, create md5 hash for more secure storage
     password = request.form['password']
     h = hashlib.md5()
     h.update(password)
     passwordhash=h.hexdigest()
-    print(passwordhash)
     print("got info")
+    #Check each username in database for copies (two users with same username is problem for login)
+    users=UserClass.query()
+    for user in users:
+        if user.username==username: flash('username already taken'); return render_template('register.html')
     #build user object
     userObj = UserClass(username = request.form['username'],
                         email = request.form['email'],
@@ -168,9 +168,7 @@ def registersub():
     userObj.put()
     print("stored obj")
     return render_template('registersubmitted.html',
-                            username=username)
-
-roots = []
+                            username=username)roots = []
 
 def storeCat(myCat):
     myCat2=Category(myCat)
