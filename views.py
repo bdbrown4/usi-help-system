@@ -127,6 +127,8 @@ def authenticate():
             if user.password==hashpassword:
                 #Set session data with username
                 session['username'] = username
+                #Set user rights
+                session['rights'] = user.rights
                 flash('Logged in successfully.')
                 return render_template('authenticated.html')
     #If login failed, tell user either username or password was bad, return to login form
@@ -157,18 +159,21 @@ def registersub():
     #Check each username in database for copies (two users with same username is problem for login)
     users=UserClass.query()
     for user in users:
-        if user.username==username: flash('username already taken'); return render_template('register.html')
+        if user.username==username: flash('Username already in use'); return render_template('register.html')
+        if user.email==email: flash('Email already in use'); return render_template('register.html')
     #build user object
     userObj = UserClass(username = request.form['username'],
                         email = request.form['email'],
                         password = passwordhash,
-                        rights='1')
+                        rights='2')
     print("built obj")
     #Store user in db
     userObj.put()
     print("stored obj")
     return render_template('registersubmitted.html',
-                            username=username)roots = []
+                            username=username)
+
+roots = []
 
 def storeCat(myCat):
     myCat2=Category(myCat)

@@ -39,6 +39,10 @@
             {% if 'username' in session %}
             <li><a  href="/logout">Logout</a></li>
             {% endif %}
+
+            {% if session['rights'] == '3' %}
+            <li><a href="http://localhost:8000/datastore?kind=UserClass">Admin</a></li>
+            {% endif %}
           </ul>
             {% if 'username' in session %}
             <p style="float:right;line-height:3;color:white">You are logged in as {{ session['username'] }}</p>
