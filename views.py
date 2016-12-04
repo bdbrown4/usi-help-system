@@ -217,6 +217,15 @@ def test():
         if myObj != None:
             for thing in myObj.returnRootChildren():
                 roots.append(thing)
+    elif request.form.has_key("Parts"):
+        if request.form["Part"]:
+            return render_template("parts.html",
+                                   models=models)
+    elif request.form.has_key("Problems"):
+        if request.form["Problem"]:
+            return render_template("problems.html",
+                                   models=models)
+    #Needs to be pushed to github
     #else
     elif len(roots) == 0:
         metaData=Tree.query()
