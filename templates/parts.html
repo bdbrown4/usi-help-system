@@ -4,7 +4,7 @@
 <h1 style="align-self: center">Parts</h1>
 <form action="" method="post" name="post">
     <div class="col-md-3">
-        <input type="hidden" name="changeModel"/>
+        <input type="hidden" name="changeModelParts"/>
             <h2>Please select the Model</h2>
                 <select name="selectedModel">
                     {% for node in models %}
@@ -16,6 +16,20 @@
                     {% endfor %}
                 </select>
         <input type="submit" value="Submit Category" id="category" name="category"/>
+    </div>
+</form>
+<form action="" method="post" name="post">
+    <div class="col-md-3">
+        <input type="hidden" name="Part"/>
+            <h2>Please select the Part you need!</h2>
+                <ul>
+                    {% for node in parts %}
+                        <li>
+                            {{ node.payload.name }} <input type="submit" value="Select Part"/>
+                            <input type="hidden" id="part" name="part" value="{{ node.payload.name }}/>
+                        </li>
+                    {% endfor %}
+                </ul>
     </div>
 </form>
 

@@ -43,7 +43,10 @@ class Category(ndb.Model):
         super(Category, self).__init__(*args, **kwargs)
         if kwargs.has_key('name'): self.name=kwargs['name']
         self.name=name
-        if kwargs.has_key('id'): self.id=kwargs['id']
+        if kwargs.has_key('id'):
+            self.id = kwargs['id']
+        else:
+            self.id = str(uuid.uuid1())
 
 class Problem(ndb.Model):
     problem=ndb.StringProperty()
@@ -56,7 +59,10 @@ class Problem(ndb.Model):
         self.problem=problem
         if kwargs.has_key('solution'): self.solution=kwargs['solution']
         self.solution=solution
-        if kwargs.has_key('id'): self.id=kwargs['id']
+        if kwargs.has_key('id'):
+            self.id = kwargs['id']
+        else:
+            self.id = str(uuid.uuid1())
 
 class Node(ndb.Model):
     payload=ndb.PickleProperty()
@@ -73,29 +79,32 @@ class Node(ndb.Model):
                 return myProb
         return None
 
-
     def parseNode(self, inDict):
         if (not inDict.has_key('lft') and not inDict.has_key('rgt')):
-            return Node(self.getObj(inDict['node']))
+            return Node(self.getObj(inDict['node']), id=inDict['node'])
         elif (inDict.has_key('lft') and not inDict.has_key('rgt')):
-            return Node(self.getObj(inDict['node']), lft=self.parseNode(inDict['lft']))
+            return Node(self.getObj(inDict['node']), lft=self.parseNode(inDict['lft']), id=inDict['node'])
         elif (inDict.has_key('rgt') and not inDict.has_key('lft')):
-            return Node(self.getObj(inDict['node']), rgt=self.parseNode(inDict['rgt']))
+            return Node(self.getObj(inDict['node']), rgt=self.parseNode(inDict['rgt']), id=inDict['node'])
         else:
-            return Node(self.getObj(inDict['node']), lft=self.parseNode(inDict['lft']), rgt=self.parseNode(inDict['rgt']))
+            return Node(self.getObj(inDict['node']), lft=self.parseNode(inDict['lft']),
+                        rgt=self.parseNode(inDict['rgt']), id=inDict['node'])
 
-    def __init__(self, payload, lft=None, rgt=None, *args, **kwargs):
+    def __init__(self, payload, lft=None, rgt=None, id=None, *args, **kwargs):
         super(Node, self).__init__(*args, **kwargs)
         if isinstance(payload, types.DictionaryType):
             # treeDict=ast.literal_eval(payload)
             myLft = self.parseNode(payload['lft'])
-            self.id = payload['node']
+            self.id = str(payload['node'])
             self.payload = self.getObj(payload['node'])
             # payload.put()
             self.lft = myLft
             self.rgt = None
         else:
-            self.id = str(uuid.uuid1())
+            if (id == None):
+                self.id = str(uuid.uuid1())
+            else:
+                self.id = id
             self.payload = payload
             #payload.put()
             self.lft = lft
@@ -185,9 +194,9 @@ class Node(ndb.Model):
         else:
             if myNode.lft != None:
                 if myNode.rgt == None:
-                    print self.spaceMe(
+                   print self.spaceMe(
                         scount) + "left guid: " + myNode.lft.payload.id + " node guid: " + myNode.payload.id
-                    return {'node':myNode.payload.id, 'lft':self.convertTree(myNode.lft, scount + 4)}
+                   return {'node':myNode.payload.id, 'lft':self.convertTree(myNode.lft, scount + 4)}
                 else:
                     print self.spaceMe(
                         scount) + "left guid: " + myNode.lft.payload.id + " node guid: " + myNode.payload.id + " right guid: " + myNode.rgt.payload.id
@@ -204,7 +213,7 @@ class Node(ndb.Model):
 class Tree(ndb.Model):
     tree = ndb.StringProperty()
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self,tree=None,*args,**kwargs):
         super(Tree, self).__init__(*args, **kwargs)
         if kwargs.has_key('tree'): self.tree=kwargs['tree']
 

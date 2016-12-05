@@ -4,7 +4,7 @@
 <h1>Problems</h1>
 <form action="" method="post" name="post">
     <div class="col-md-3">
-        <input type="hidden" name="changeModel"/>
+        <input type="hidden" name="changeModelProblems"/>
             <h2>Please select the Model</h2>
                 <select name="selectedModel">
                     {% for node in models %}
@@ -18,5 +18,23 @@
         <input type="submit" value="Submit Category" id="category" name="category"/>
     </div>
 </form>
-
+<form action="" method="post" name="post">
+        <div class="col-md-3" id="problems" name="problems">
+                <ul>
+                <input type="hidden" name="Problems">
+                    {%  for node in roots %}
+                        <li>
+                            {% if node.nodeType()=="Problem" %}
+                                {% if node.payload.solution==None %}
+                                    {{ node.payload.problem }} <input type="submit" value="Submit" id="problem" name="problem"/>
+                                {% endif %}
+                                {% if node.payload.problem==None %}
+                                    {{ node.payload.solution }} <input type="submit" value="Submit" id="solution" name="solution"/>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                    {%  endfor %}
+                </ul>
+        </div>
+    </form>
 {% endblock %}

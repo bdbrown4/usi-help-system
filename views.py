@@ -9,8 +9,8 @@ import config
 import ast
 
 
-@app.route('/',methods=['GET','POST'])
-def index():
+@app.route('/testTree',methods=['GET','POST'])
+def test():
     addForm=ItemForm()
     delForm = DelForm()
     editForm = EditForm()
@@ -184,12 +184,22 @@ def storeProb(myProb, myAns):
     return myProb2
 
 roots = []
-cats = []
 items = []
 models = []
+parts=[]
+problems=[]
+solution=[]
 
-@app.route('/testTree',methods=['GET','POST'])
-def test():
+@app.route("/submittedNameAddress", methods=['POST'])
+def submissionOfPart():
+    name = request.form['name']
+    address = request.form['address']
+    return render_template("submittedNameAddress.html",
+                           name=name,
+                           address=address)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
     if request.form.has_key("changeCat") or request.form.has_key("changeProb"):
         myObj = None
         for node in roots:
@@ -197,6 +207,8 @@ def test():
                 myObj = node
                 break
         if myObj!=None:
+            del roots[:]
+            roots.append(myObj)
             for thing in myObj.returnRootChildren():
                 items.append(thing)
     elif request.form.has_key("changeItem"):
@@ -206,25 +218,68 @@ def test():
                 myObj = node
                 break
         if myObj != None:
+            del items[:]
+            items.append(myObj)
             for thing in myObj.returnRootChildren():
                 models.append(thing)
-    elif request.form.has_key("changeModel"):
+    elif request.form.has_key("changeModelParts"):
         myObj = None
         for node in models:
             if (node.nodeType() == "Category" and node.payload.name == request.form['selectedModel']):
                 myObj = node
                 break
         if myObj != None:
+            del models[:]
+            models.append(myObj)
             for thing in myObj.returnRootChildren():
-                roots.append(thing)
-    elif request.form.has_key("Parts"):
-        if request.form["Part"]:
+                parts.append(thing)
             return render_template("parts.html",
-                                   models=models)
+                                   models=models,
+                                   parts=parts)
+    elif request.form.has_key("Parts"):
+        return render_template("parts.html",
+                                   models=models,
+                                   parts=parts)
+    elif request.form.has_key("Part"):
+        myObj = None
+        for node in parts:
+            if node.nodeType() == "Category":
+                myObj=node
+                break
+        if myObj !=None:
+            del roots[:]
+            del items[:]
+            del models[:]
+            del parts[:]
+            part=myObj
+        return render_template("partSelectedDiv.html",
+                               part=part)
+    elif request.form.has_key("changeModelProblems"):
+        myObj = None
+        for node in models:
+            if (node.nodeType() == "Category" and node.payload.name == request.form['selectedModel']):
+                myObj = node
+                break
+        if myObj != None:
+            del models[:]
+            models.append(myObj)
+            for thing in myObj.returnRootChildren():
+                if isinstance(thing, Problem.problem):
+                    problems.append(thing)
+                else:
+                    solution.append(thing)
+            return render_template("problems.html",
+                                   models=models,
+                                   problems=problems,
+                                   solution=solution)
     elif request.form.has_key("Problems"):
-        if request.form["Problem"]:
+        if request.form["problem"]:
             return render_template("problems.html",
                                    models=models)
+        elif request.form.has_key("Problems"):
+            if request.form["solution"]:
+                return render_template("problems.html",
+                                       models=models)
     #Needs to be pushed to github
     #else
     elif len(roots) == 0:
@@ -245,16 +300,20 @@ def test():
 
             we.addSubNode(storeCat("Torro"))
             honda = lm.addSubNode(storeCat("Honda"))
+            honda.addSubNode(storeCat("Gas Tank"))
+            honda.addSubNode(storeCat("Blades"))
+            honda.addSubNode(storeCat("Spark Plugs"))
             bd = lm.addSubNode(storeCat("B&D"))
-            honda.addSubNode(storeProb("WOW",None))
-            bd.addSubNode(storeCat("itWORKS!"))
+            bd.addSubNode(storeCat("Wheels"))
+            bd.addSubNode(storeCat("Bearings"))
             r1.printTree()
+            print(r1.payload.id)
 
-            treeDict = r1.convertTree()
+            #treeDict = r1.convertTree()
             Tree(str(r1.convertTree())).put()
             Tree(str(r2.convertTree())).put()
-            r1Prime = Node(treeDict)
-            r1Prime.printTree()
+            #r1Prime = Node(treeDict)
+            #r1Prime.printTree()
         else:
             for probsol in Problem.query(): config.probList.append(probsol)
             for cat in Category.query(): config.catList.append(cat)
@@ -266,6 +325,4 @@ def test():
 
     return render_template("testindex.html",
                            roots=roots,
-                           models=models,
-                           items=items,
-                           cats=cats)
+                           items=items)

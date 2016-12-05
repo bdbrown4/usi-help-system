@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form method="post" action="/submittedNameAddress">
+<div class="col-md-3">
+    <input type="hidden" name="nameAddressSubmit"/>
+        <h1>You selected "{{ part.payload.name }}" as the part you need!</h1>
+        <p>Please fill out your name and billing/shipping address below<br>
+            and your new {{ part.payload.name }} will be delivered in a few business days!</p>
+          <label for="name">First/Last Name:</label>
+          <input type="text" name="name"><br /><br />
+          <label for="address">Billing/Shipping Address:</label>
+          <input type="text" name="address"><br /><br />
+          <input type="submit">
+</div>
+</form>
+
+{% endblock %}
