@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/Index.js"></script>
+
 <h1 style="align-self: center">Parts</h1>
-<form action="" method="post" name="post">
+<form action="" method="post" name="post" id="modelsparts">
     <div class="col-md-3">
         <input type="hidden" name="changeModelParts"/>
             <h2>Please select the Model</h2>
@@ -18,7 +24,7 @@
         <input type="submit" value="Submit Model" id="category" name="category"/>
     </div>
 </form>
-<form action="" method="post" name="post">
+<form action="" method="post" name="post" id="parts">
     <div class="col-md-3">
         <input type="hidden" name="Part"/>
             <h2>Please select the Part you need!</h2>

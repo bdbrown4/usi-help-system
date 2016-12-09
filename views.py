@@ -145,6 +145,12 @@ def register():
 def about():
     return render_template('about.html')
 
+@app.route('/noAnswer')
+def noAnswer():
+    del roots[:]
+    del items[:]
+    return render_template('noAnswer.html')
+
 @app.route('/registersubmitted', methods=['POST']) #https://docs.python.org/2/library/hashlib.html
 def registersub():
     #get info from fields
@@ -188,7 +194,6 @@ items = []
 models = []
 parts=[]
 problems=[]
-solutions=[]
 
 @app.route("/submittedNameAddress", methods=['POST'])
 def submissionOfPart():
@@ -208,6 +213,8 @@ def index():
                 break
         if myObj!=None:
             del roots[:]
+            del problems[:]
+            del models[:]
             roots.append(myObj)
             for thing in myObj.returnRootChildren():
                 items.append(thing)
@@ -269,24 +276,28 @@ def index():
                     problems.append(thing)
             return render_template("problems.html",
                                    models=models,
-                                   problems=problems,
-                                   solutions=solutions)
+                                   problems=problems)
     elif request.form.has_key("Problems"):
         return render_template("problems.html",
                                    models=models,
-                                   problems=problems,
-                                   solutions=solutions)
-    elif request.form.has_key("Problem"):
+                                   problems=problems)
+    elif request.form.has_key("Problem") and request.form['yesProbs']:
         myObj = None
         for node in problems:
             if (node.nodeType() == "Problem" and (node.payload.problem == request.form['selectedThing'] or node.payload.solution == request.form['selectedThing'])):
                 myObj = node
                 break
         if myObj != None:
+            del roots[:]
+            del items[:]
+            del parts[:]
             del problems[:]
             problems.append(myObj)
             for thing in myObj.returnRootChildren():
-                answer = thing.payload.solution
+                if thing.payload.problem:
+                    problems.append(thing)
+                else:
+                    answer = thing.payload.solution
             return render_template("problems.html",
                                    models=models,
                                    problems=problems,
@@ -300,7 +311,7 @@ def index():
             roots.append(r1)
             lm = r1.addSubNode(storeCat("Lawn Mower"))
             we = r1.addSubNode(storeCat("Weed Eater"))
-            r1.addSubNode(storeCat("Edger"))
+            ed = r1.addSubNode(storeCat("Edger"))
 
             r2 = Node(storeCat("Mobile Phone"))
             att=r2.addSubNode(storeCat("AT&T"))
@@ -315,16 +326,103 @@ def index():
             nexv=verizon.addSubNode(storeCat("Nexus"))
             iphonev=verizon.addSubNode(storeCat("iPhone 7"))
             galaxyv=verizon.addSubNode(storeCat("Galaxy 7S"))
+
             nexsprobone = nexs.addSubNode(storeProb("Broken Screen?", None))
             nexsprobtwo = nexs.addSubNode(storeProb("Broken home button?",None))
             nexsprobthree = nexs.addSubNode(storeProb("Phone doesn't turn on?", None))
             nexsprobone.addSubNode(storeProb(None, "You need a new screen!"))
-            nexspartone = nexs.addSubNode(storeCat("Screen"))
-            nexsparttwo = nexs.addSubNode(storeCat("Home Button"))
-            nexspartthree = nexs.addSubNode(storeCat("Battery"))
+            nexsprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            nexsprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+            nexaprobone= nexa.addSubNode(storeProb("Broken Screen?", None))
+            nexaprobtwo = nexa.addSubNode(storeProb("Broken home button?",None))
+            nexaprobthree = nexa.addSubNode(storeProb("Phone doesn't turn on?", None))
+            nexaprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            nexaprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            nexaprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+            nexvprobone = nexv.addSubNode(storeProb("Broken Screen?", None))
+            nexvprobtwo = nexv.addSubNode(storeProb("Broken home button?",None))
+            nexvprobthree = nexv.addSubNode(storeProb("Phone doesn't turn on?", None))
+            nexvprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            nexvprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            nexvprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+
+            iphonesprobone = iphones.addSubNode(storeProb("Broken Screen?", None))
+            iphonesprobtwo = iphones.addSubNode(storeProb("Broken home button?", None))
+            iphonesprobthree = iphones.addSubNode(storeProb("Phone doesn't turn on?", None))
+            iphonesprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            iphonesprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            iphonesprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+            iphoneaprobone = iphonea.addSubNode(storeProb("Broken Screen?", None))
+            iphoneaprobtwo = iphonea.addSubNode(storeProb("Broken home button?", None))
+            iphoneaprobthree = iphonea.addSubNode(storeProb("Phone doesn't turn on?", None))
+            iphoneaprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            iphoneaprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            iphoneaprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+            iphonevprobone = iphonev.addSubNode(storeProb("Broken Screen?", None))
+            iphonevprobtwo = iphonev.addSubNode(storeProb("Broken home button?", None))
+            iphonevprobthree = iphonev.addSubNode(storeProb("Phone doesn't turn on?", None))
+            iphonevprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            iphonevprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            iphonevprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+
+            galaxysprobone = galaxys.addSubNode(storeProb("Broken Screen?", None))
+            galaxysprobtwo = galaxys.addSubNode(storeProb("Broken home button?", None))
+            galaxysprobthree = galaxys.addSubNode(storeProb("Phone doesn't turn on?", None))
+            galaxysprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            galaxysprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            galaxysprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+            galaxyaprobone = galaxya.addSubNode(storeProb("Broken Screen?", None))
+            galaxyaprobtwo = galaxya.addSubNode(storeProb("Broken home button?", None))
+            galaxyaprobthree = galaxya.addSubNode(storeProb("Phone doesn't turn on?", None))
+            galaxyaprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            galaxyaprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            galaxyaprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+            galaxyvprobone = galaxyv.addSubNode(storeProb("Broken Screen?", None))
+            galaxyvprobtwo = galaxyv.addSubNode(storeProb("Broken home button?", None))
+            galaxyvprobthree = galaxyv.addSubNode(storeProb("Phone doesn't turn on?", None))
+            galaxyvprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            galaxyvprobtwo.addSubNode(storeProb(None, "You need a new home button!"))
+            galaxyvprobthree.addSubNode(storeProb(None, "You need a new battery!"))
+
+            nexs.addSubNode(storeCat("Screen"))
+            nexs.addSubNode(storeCat("Home Button"))
+            nexs.addSubNode(storeCat("Battery"))
+            nexa.addSubNode(storeCat("Screen"))
+            nexa.addSubNode(storeCat("Home Button"))
+            nexa.addSubNode(storeCat("Battery"))
+            nexv.addSubNode(storeCat("Screen"))
+            nexv.addSubNode(storeCat("Home Button"))
+            nexv.addSubNode(storeCat("Battery"))
+
+            iphones.addSubNode(storeCat("Screen"))
+            iphones.addSubNode(storeCat("Home Button"))
+            iphones.addSubNode(storeCat("Battery"))
+            iphonea.addSubNode(storeCat("Screen"))
+            iphonea.addSubNode(storeCat("Home Button"))
+            iphonea.addSubNode(storeCat("Battery"))
+            iphonev.addSubNode(storeCat("Screen"))
+            iphonev.addSubNode(storeCat("Home Button"))
+            iphonev.addSubNode(storeCat("Battery"))
+
+            galaxys.addSubNode(storeCat("Screen"))
+            galaxys.addSubNode(storeCat("Home Button"))
+            galaxys.addSubNode(storeCat("Battery"))
+            galaxya.addSubNode(storeCat("Screen"))
+            galaxya.addSubNode(storeCat("Home Button"))
+            galaxya.addSubNode(storeCat("Battery"))
+            galaxyv.addSubNode(storeCat("Screen"))
+            galaxyv.addSubNode(storeCat("Home Button"))
+            galaxyv.addSubNode(storeCat("Battery"))
+
             roots.append(r2);
 
-            we.addSubNode(storeCat("Torro"))
+            torro = we.addSubNode(storeCat("Torro"))
+            torro.addSubNode(storeCat("Gas Tank"))
+            torro.addSubNode(storeCat("Pull String"))
+            torro.addSubNode(storeCat("Spark Plugs"))
+            craftsmen = we.addSubNode(storeCat("Craftsmen"))
+            craftsmen.addSubNode(storeCat("Gas Tank"))
+            craftsmen.addSubNode(storeCat("Nylon String"))
             honda = lm.addSubNode(storeCat("Honda"))
             honda.addSubNode(storeCat("Gas Tank"))
             honda.addSubNode(storeCat("Blades"))
@@ -332,6 +430,31 @@ def index():
             bd = lm.addSubNode(storeCat("B&D"))
             bd.addSubNode(storeCat("Wheels"))
             bd.addSubNode(storeCat("Bearings"))
+            torro2 = ed.addSubNode(storeCat("Torro"))
+            torro2.addSubNode(storeCat("Handles"))
+            torro2.addSubNode(storeCat("Screws"))
+
+            torroprobone= torro.addSubNode(storeProb("Do you have gas?", None))
+            torroprobtwo= torro.addSubNode(storeProb("Is your pull string tangled?", None))
+            torroprobone.addSubNode(storeProb(None,"You have no gas!"))
+            torroprobtwo.addSubNode(storeProb(None, "You need to untangle your pull string!"))
+            craftsmenprobone = craftsmen.addSubNode(storeProb("Do you have gas?", None))
+            craftsmenprobtwo = craftsmen.addSubNode(storeProb("Is your pull string tangled?", None))
+            craftsmenprobone.addSubNode(storeProb(None, "You have no gas!"))
+            craftsmenprobtwo.addSubNode(storeProb(None, "You need to untangle your pull string!"))
+            hondaprobone = honda.addSubNode(storeProb("Do you have gas?", None))
+            hondaprobtwo = honda.addSubNode(storeProb("Are the blades dull?", None))
+            hondaprobone.addSubNode(storeProb(None, "You have no gas!"))
+            hondaprobtwo.addSubNode(storeProb(None, "Your blades are dull!"))
+            bdprobone = bd.addSubNode(storeProb("Are your wheels wobbling?", None))
+            bdprobtwo = bd.addSubNode(storeProb("Are you hearing a squeaking noise as you mow?", None))
+            bdprobone.addSubNode(storeProb(None,"You need to tighten the wheels!"))
+            bdprobtwo.addSubNode(storeProb(None,"You need to put some damn WD-40 on those bearings!!!"))
+            torro2probone = torro2.addSubNode(storeProb("Are you handles wobbling off as you cut?", None))
+            torro2probtwo = torro2.addSubNode(storeProb("Are your handles rusty?",None))
+            torro2probone.addSubNode(storeProb(None,"You need to tighten the screws!"))
+            torro2probtwo.addSubNode(storeProb(None,"You definitely need some new handles!"))
+
             r1.printTree()
 
             #treeDict = r1.convertTree()

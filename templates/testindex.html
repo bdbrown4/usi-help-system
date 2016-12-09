@@ -3,12 +3,13 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/Index.js"></script>
 
 <body style="margin:3%">
 <div class="row">
-    <form action="" method="post" name="post">
+    <form action="" method="post" name="post" id="roots">
         <div class="col-md-4">
             <input type="hidden" name="changeCat"/>
                 <h2>Please select a Category</h2>
@@ -21,10 +22,10 @@
                             </option>
                         {% endfor %}
                     </select>
-            <input type="submit" value="Submit Category" id="category" name="category"/>
+            <input type="submit" value="Submit Category"  name="category"/>
         </div>
     </form>
-    <form action="" method="post" name="post">
+    <form action="" method="post" name="post" id="itemsForm"  >
         <div class="col-md-4">
             <input type="hidden" name="changeItem"/>
                 <h2>Please select your<br> Item of Interest</h2>
@@ -37,19 +38,19 @@
                             </option>
                         {% endfor %}
                     </select>
-        <input type="submit" value="Submit Item" id="category" name="category"/>
+        <input type="submit" value="Submit Item" id="itemsSub" name="category"/>
         </div>
     </form>
-    <div class="col-md-4">
+    <div class="col-md-4" id="partsprobs">
             <h2>Are you looking for a Part or Problem?</h2>
         <div style="margin-left:15%; margin-right: 45%;">
             <form style="float:left;" action="" method="post" name="post">
                 <input type="hidden" name="Parts"/>
-                <input type="submit" value="Part" name="Part"/>
+                <input type="submit" value="Part" name="Part" class="btn btn-default"/>
             </form>
             <form style="float: right;" action="" method="post" name="post">
-                <input type="hidden" name="Problems"/>
-                <input type="submit" value="Problem" name="Problem"/>
+                <input type="hidden" name="Problems" />
+                <input type="submit" value="Problem" id="partsprobs" name="Problem" class="btn btn-default"/>
             </form>
         </div>
     </div>

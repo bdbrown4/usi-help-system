@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/Index.js"></script>
+
 <h1>Problems</h1>
-<form action="" method="post" name="post">
+<form action="" method="post" name="post" id="modelsprobs">
     <div class="col-md-3">
         <input type="hidden" name="changeModelProblems"/>
             <h2>Please select the Model</h2>
@@ -15,10 +21,10 @@
                         </option>
                     {% endfor %}
                 </select>
-        <input type="submit" value="Submit Category" id="category" name="category"/>
+        <input type="submit" value="Submit Model" id="category" name="category"/>
     </div>
 </form>
-<form action="" method="post" name="post">
+<form action="" method="post" name="post" id="probs">
     <div class="col-md-3" id="problems" name="problems">
         <input type="hidden" name="Problem">
             <h2>Please select the Problem!</h2>
@@ -31,16 +37,19 @@
                         </option>
                     {%  endfor %}
                 </select>
-        <input type="submit" value="Submit" id="category" name="category"/>
+        <input type="submit" value="Yes" id="category" name="yesProbs"class="btn btn-default"/>
+        <a href="/noAnswer" class="btn btn-default">No</a>
     </div>
 </form>
-<form action="" method="post" name="post">
+<form action="" method="post" name="post" id="solution">
 <div class="col-md-3" id="solution" name="solution">
     <input type="hidden" name="Solution">
-    <h2>Below is your estimated Solution!</h2>
-    <h3>{{ answer }}</h3>
+    <h1>Below is your estimated Solution!</h1>
     <hr>
-    <h2>If your solution isn't listed, please <a href="/form">contact us</a> via our contact page!</h2>
+    <h2>{{ answer }}</h2>
+    <hr>
+    <h3>If your solution isn't listed, please <a href="/form" type="submit">contact us</a> via our contact page!
+        Otherwise, please return to our <a href="{{url_for('index')}}" type="submit">homepage</a>!</h3>
     </div>
 </form>
 {% endblock %}

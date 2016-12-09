@@ -105,8 +105,6 @@ class Node(ndb.Model):
             # payload.put()
             self.rgt = None
         else:
-            # Very interesting bug (2016-12-05 WW)
-            # if(id==None): self.id = str(uuid.uuid1())
             if (id == None):
                 self.id = str(payload.id)
             else:
@@ -230,7 +228,7 @@ class Node(ndb.Model):
     #    retProb=Problem(name,self.rgt,self.rgt+1)
 
 class Tree(ndb.Model):
-    tree = ndb.StringProperty()
+    tree = ndb.TextProperty()
 
     def __init__(self,tree='',*args,**kwargs):
         super(Tree, self).__init__(*args, **kwargs)
