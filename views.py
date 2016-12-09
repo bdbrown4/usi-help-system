@@ -188,7 +188,7 @@ items = []
 models = []
 parts=[]
 problems=[]
-solution=[]
+solutions=[]
 
 @app.route("/submittedNameAddress", methods=['POST'])
 def submissionOfPart():
@@ -232,7 +232,8 @@ def index():
             del models[:]
             models.append(myObj)
             for thing in myObj.returnRootChildren():
-                parts.append(thing)
+                if thing.nodeType() == "Category":
+                    parts.append(thing)
             return render_template("parts.html",
                                    models=models,
                                    parts=parts)
@@ -243,7 +244,7 @@ def index():
     elif request.form.has_key("Part"):
         myObj = None
         for node in parts:
-            if node.nodeType() == "Category":
+            if node.nodeType() == "Category" and node.payload.name == request.form['selectedPart']:
                 myObj=node
                 break
         if myObj !=None:
@@ -264,22 +265,32 @@ def index():
             del models[:]
             models.append(myObj)
             for thing in myObj.returnRootChildren():
-                if isinstance(thing, Problem.problem):
+                if thing.nodeType() == "Problem":
                     problems.append(thing)
-                else:
-                    solution.append(thing)
             return render_template("problems.html",
                                    models=models,
                                    problems=problems,
-                                   solution=solution)
+                                   solutions=solutions)
     elif request.form.has_key("Problems"):
-        if request.form["problem"]:
+        return render_template("problems.html",
+                                   models=models,
+                                   problems=problems,
+                                   solutions=solutions)
+    elif request.form.has_key("Problem"):
+        myObj = None
+        for node in problems:
+            if (node.nodeType() == "Problem" and (node.payload.problem == request.form['selectedThing'] or node.payload.solution == request.form['selectedThing'])):
+                myObj = node
+                break
+        if myObj != None:
+            del problems[:]
+            problems.append(myObj)
+            for thing in myObj.returnRootChildren():
+                answer = thing.payload.solution
             return render_template("problems.html",
-                                   models=models)
-        elif request.form.has_key("Problems"):
-            if request.form["solution"]:
-                return render_template("problems.html",
-                                       models=models)
+                                   models=models,
+                                   problems=problems,
+                                   answer=answer)
     #Needs to be pushed to github
     #else
     elif len(roots) == 0:
@@ -292,11 +303,26 @@ def index():
             r1.addSubNode(storeCat("Edger"))
 
             r2 = Node(storeCat("Mobile Phone"))
-            rr2 = r2.addSubNode(storeProb("Are you having a problem?", None))
+            att=r2.addSubNode(storeCat("AT&T"))
+            verizon=r2.addSubNode(storeCat("Verizon"))
+            sprint=r2.addSubNode(storeCat("Sprint"))
+            nexs=sprint.addSubNode(storeCat("Nexus"))
+            iphones=sprint.addSubNode(storeCat("iPhone 7"))
+            galaxys=sprint.addSubNode(storeCat("Galaxy 7S"))
+            nexa=att.addSubNode(storeCat("Nexus"))
+            iphonea=att.addSubNode(storeCat("iPhone 7"))
+            galaxya=att.addSubNode(storeCat("Galaxy 7S"))
+            nexv=verizon.addSubNode(storeCat("Nexus"))
+            iphonev=verizon.addSubNode(storeCat("iPhone 7"))
+            galaxyv=verizon.addSubNode(storeCat("Galaxy 7S"))
+            nexsprobone = nexs.addSubNode(storeProb("Broken Screen?", None))
+            nexsprobtwo = nexs.addSubNode(storeProb("Broken home button?",None))
+            nexsprobthree = nexs.addSubNode(storeProb("Phone doesn't turn on?", None))
+            nexsprobone.addSubNode(storeProb(None, "You need a new screen!"))
+            nexspartone = nexs.addSubNode(storeCat("Screen"))
+            nexsparttwo = nexs.addSubNode(storeCat("Home Button"))
+            nexspartthree = nexs.addSubNode(storeCat("Battery"))
             roots.append(r2);
-            gp = rr2.addSubNode(storeProb("Does the lawn mower have gas?", None))
-            rr2.addSubNode(storeProb("Is the lawn mower making noises?", None))
-            gp.addSubNode(storeProb(None, "You don't have any gas!"))
 
             we.addSubNode(storeCat("Torro"))
             honda = lm.addSubNode(storeCat("Honda"))
@@ -307,7 +333,6 @@ def index():
             bd.addSubNode(storeCat("Wheels"))
             bd.addSubNode(storeCat("Bearings"))
             r1.printTree()
-            print(r1.payload.id)
 
             #treeDict = r1.convertTree()
             Tree(str(r1.convertTree())).put()

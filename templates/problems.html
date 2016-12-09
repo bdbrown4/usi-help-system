@@ -19,22 +19,28 @@
     </div>
 </form>
 <form action="" method="post" name="post">
-        <div class="col-md-3" id="problems" name="problems">
-                <ul>
-                <input type="hidden" name="Problems">
-                    {%  for node in roots %}
-                        <li>
+    <div class="col-md-3" id="problems" name="problems">
+        <input type="hidden" name="Problem">
+            <h2>Please select the Problem!</h2>
+                <select name="selectedThing">
+                    {%  for node in problems%}
+                        <option>
                             {% if node.nodeType()=="Problem" %}
-                                {% if node.payload.solution==None %}
-                                    {{ node.payload.problem }} <input type="submit" value="Submit" id="problem" name="problem"/>
-                                {% endif %}
-                                {% if node.payload.problem==None %}
-                                    {{ node.payload.solution }} <input type="submit" value="Submit" id="solution" name="solution"/>
-                                {% endif %}
+                                    {{ node.payload.problem }}
                             {% endif %}
-                        </li>
+                        </option>
                     {%  endfor %}
-                </ul>
-        </div>
-    </form>
+                </select>
+        <input type="submit" value="Submit" id="category" name="category"/>
+    </div>
+</form>
+<form action="" method="post" name="post">
+<div class="col-md-3" id="solution" name="solution">
+    <input type="hidden" name="Solution">
+    <h2>Below is your estimated Solution!</h2>
+    <h3>{{ answer }}</h3>
+    <hr>
+    <h2>If your solution isn't listed, please <a href="/form">contact us</a> via our contact page!</h2>
+    </div>
+</form>
 {% endblock %}

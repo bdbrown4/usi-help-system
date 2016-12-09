@@ -15,21 +15,23 @@
                         </option>
                     {% endfor %}
                 </select>
-        <input type="submit" value="Submit Category" id="category" name="category"/>
+        <input type="submit" value="Submit Model" id="category" name="category"/>
     </div>
 </form>
 <form action="" method="post" name="post">
     <div class="col-md-3">
         <input type="hidden" name="Part"/>
             <h2>Please select the Part you need!</h2>
-                <ul>
+                <select name="selectedPart">
                     {% for node in parts %}
-                        <li>
-                            {{ node.payload.name }} <input type="submit" value="Select Part"/>
-                            <input type="hidden" id="part" name="part" value="{{ node.payload.name }}/>
-                        </li>
+                        <option>
+                            {% if node.nodeType()=="Category" %}
+                                {{ node.payload.name }}
+                            {%endif%}
+                        </option>
                     {% endfor %}
-                </ul>
+                </select>
+        <input type="submit" value="Submit Part" id="category" name="category"/>
     </div>
 </form>
 

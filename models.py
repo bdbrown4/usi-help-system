@@ -94,19 +94,25 @@ class Node(ndb.Model):
         super(Node, self).__init__(*args, **kwargs)
         if isinstance(payload, types.DictionaryType):
             # treeDict=ast.literal_eval(payload)
-            myLft = self.parseNode(payload['lft'])
+            if 'lft' in payload:
+                myLft = self.parseNode(payload['lft'])
+                self.lft = myLft
+            else:
+                # print payload['lft']
+                self.lft = None
             self.id = str(payload['node'])
             self.payload = self.getObj(payload['node'])
             # payload.put()
-            self.lft = myLft
             self.rgt = None
         else:
+            # Very interesting bug (2016-12-05 WW)
+            # if(id==None): self.id = str(uuid.uuid1())
             if (id == None):
-                self.id = str(uuid.uuid1())
+                self.id = str(payload.id)
             else:
                 self.id = id
             self.payload = payload
-            #payload.put()
+            # payload.put()
             self.lft = lft
             self.rgt = rgt
 
@@ -183,7 +189,20 @@ class Node(ndb.Model):
                         #config.probList.append(myNode.payload)
                     self.printTree(myNode.rgt, scount)
 
-    def convertTree(self, myNode=None, scount=0):
+    def convertTree(self, myNode=None):
+        if myNode == None: myNode = self
+        if myNode.rgt == None and myNode.lft == None:
+            return {'node': myNode.payload.id}
+        elif myNode.rgt != None and myNode.lft == None:
+            return {'node': myNode.payload.id, 'rgt': self.convertTree(myNode=myNode.rgt)}
+        elif myNode.lft != None and myNode.rgt == None:
+            return {'node': myNode.payload.id, 'lft': self.convertTree(myNode=myNode.lft)}
+        else:
+            return {'node': myNode.payload.id,
+                    'lft': self.convertTree(myNode=myNode.lft),
+                    'rgt': self.convertTree(myNode=myNode.rgt)}
+
+    def convertTreeOld(self, myNode=None, scount=0):
 
         if myNode == None:
             myNode = self
@@ -213,9 +232,10 @@ class Node(ndb.Model):
 class Tree(ndb.Model):
     tree = ndb.StringProperty()
 
-    def __init__(self,tree=None,*args,**kwargs):
+    def __init__(self,tree='',*args,**kwargs):
         super(Tree, self).__init__(*args, **kwargs)
         if kwargs.has_key('tree'): self.tree=kwargs['tree']
+        self.tree=tree
 
 
 class UserClass(ndb.Model):
